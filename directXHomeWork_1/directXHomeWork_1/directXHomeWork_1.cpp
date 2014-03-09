@@ -21,10 +21,6 @@ D3DMATERIAL9* g_pMeshMaterials0 = NULL;
 LPDIRECT3DTEXTURE9* g_pMeshTextures0 = NULL;
 DWORD g_dwNumMaterials = 0L;
 
-LPD3DXMESH g_pMesh1 = NULL;
-D3DMATERIAL9* g_pMeshMaterials1 = NULL;
-LPDIRECT3DTEXTURE9* g_pMeshTextures1 = NULL;
-
 
 UINT g_tick = 0;
 
@@ -138,15 +134,8 @@ HRESULT InitGeometry()
 {
 	//mesh
 	LPD3DXBUFFER pD3DXMtrlBuffer0;
-	LPD3DXBUFFER pD3DXMtrlBuffer1;
 
 	if (FAILED(D3DXLoadMeshFromX(L"Tiger.x", D3DXMESH_SYSTEMMEM, g_pD3DDevice, NULL, &pD3DXMtrlBuffer0, NULL, &g_dwNumMaterials, &g_pMesh0)))
-	{
-		MessageBox(NULL, L"Could not find tiger.x", L"Meshes.exe", MB_OK);
-		return E_FAIL;
-	}
-
-	if (FAILED(D3DXLoadMeshFromX(L"Tiger.x", D3DXMESH_SYSTEMMEM, g_pD3DDevice, NULL, &pD3DXMtrlBuffer1, NULL, &g_dwNumMaterials, &g_pMesh1)))
 	{
 		MessageBox(NULL, L"Could not find tiger.x", L"Meshes.exe", MB_OK);
 		return E_FAIL;
@@ -189,44 +178,6 @@ HRESULT InitGeometry()
 		}
 	}
 	pD3DXMtrlBuffer0->Release();
-
-	//2¹ø
-	d3dxMarteials = (D3DXMATERIAL*) pD3DXMtrlBuffer1->GetBufferPointer();
-	g_pMeshMaterials1 = new D3DMATERIAL9[g_dwNumMaterials];
-	if (NULL == g_pMeshMaterials1)
-	{
-		return E_OUTOFMEMORY;
-	}
-	g_pMeshTextures1 = new LPDIRECT3DTEXTURE9[g_dwNumMaterials];
-	if (NULL == g_pMeshTextures1)
-	{
-		return E_OUTOFMEMORY;
-	}
-
-	for (DWORD i = 0; i < g_dwNumMaterials; ++i)
-	{
-		g_pMeshMaterials1[i] = d3dxMarteials[i].MatD3D;
-
-		g_pMeshMaterials1[i].Ambient = g_pMeshMaterials1[i].Diffuse;
-
-		g_pMeshTextures1[i] = NULL;
-		if ((NULL != d3dxMarteials[i].pTextureFilename) && lstrlenA(d3dxMarteials[i].pTextureFilename)>0)
-		{
-			if (FAILED(D3DXCreateTextureFromFileA(g_pD3DDevice, d3dxMarteials[i].pTextureFilename, &g_pMeshTextures1[i])))
-			{
-				const CHAR* strPrefix = "..\\";
-				CHAR strTexture[MAX_PATH];
-				strcpy_s(strTexture, MAX_PATH, strPrefix);
-				strcat_s(strTexture, MAX_PATH, d3dxMarteials[i].pTextureFilename);
-
-				if (FAILED(D3DXCreateTextureFromFileA(g_pD3DDevice, strTexture, &g_pMeshTextures1[i])))
-				{
-					MessageBox(NULL, L"Could not find texture map", L"Meshes.exe", MB_OK);
-				}
-			}
-		}
-	}
-	pD3DXMtrlBuffer1->Release();
 
 	//silinder
 	if (FAILED(D3DXCreateTextureFromFile(g_pD3DDevice, L"gom.bmp", &g_pTexture0)))
@@ -406,12 +357,13 @@ VOID Render()
 		g_pD3DDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2 * 50 - 2);
 
 
+
 		//tiger 1
 		D3DXMATRIXA16 matFirstTiger, matTrans, matRotate;
 		//D3DXMatrixIdentity(&matFirstTiger);
 
 		g_pD3DDevice->GetTransform(D3DTS_WORLD, &matFirstTiger);
-		D3DXMatrixTranslation(&matTrans, -3.f, -1.5f, -2.f);		
+		D3DXMatrixTranslation(&matTrans, -3.f, -1.5f, -1.6f);		
 		D3DXMatrixRotationY(&matRotate, timeGetTime() / 1000.0f);
 		D3DXMatrixMultiply(&matFirstTiger, &matRotate, &matTrans);
 		g_pD3DDevice->SetTransform(D3DTS_WORLD, &matFirstTiger);
@@ -433,16 +385,15 @@ VOID Render()
 		D3DXMatrixIdentity(&matRotate);
 
 		g_pD3DDevice->GetTransform(D3DTS_WORLD, &matSecondTiger);
-		D3DXMatrixTranslation(&matTrans, 3.f, -1.5f, -2.f);
+		D3DXMatrixTranslation(&matTrans, 3.f, -1.5f, -1.6f);
 		D3DXMatrixRotationY(&matRotate, -(timeGetTime() / 1000.0f));
 		D3DXMatrixMultiply(&matSecondTiger, &matRotate, &matTrans);
 		g_pD3DDevice->SetTransform(D3DTS_WORLD, &matSecondTiger);
 
-		
 		for (DWORD i = 0; i < g_dwNumMaterials; ++i)
 		{
-			g_pD3DDevice->SetMaterial(&g_pMeshMaterials1[i]);
-			g_pD3DDevice->SetTexture(0, g_pMeshTextures1[i]);
+			g_pD3DDevice->SetMaterial(&g_pMeshMaterials0[i]);
+			g_pD3DDevice->SetTexture(0, g_pMeshTextures0[i]);
 
 			g_pMesh0->DrawSubset(i);
 		}
@@ -476,26 +427,6 @@ VOID Cleanup()
 		g_pMesh0->Release();
 	}
 
-	//tiger2
-	if (NULL != g_pMeshMaterials1)
-	{
-		delete [] g_pMeshMaterials1;
-	}
-	if (g_pMeshTextures0)
-	{
-		for (DWORD i = 0; i < g_dwNumMaterials; ++i)
-		{
-			if (g_pMeshTextures1[i])
-			{
-				g_pMeshTextures1[i]->Release();
-			}
-		}
-		delete [] g_pMeshTextures1;
-	}
-	if (NULL != g_pMesh1)
-	{
-		g_pMesh1->Release();
-	}
 
 	if (NULL != g_pTexture0)
 	{
