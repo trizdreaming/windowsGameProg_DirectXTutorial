@@ -141,6 +141,17 @@ HRESULT InitGeometry()
 		return E_FAIL;
 	}
 
+	if ( !(g_pMesh0->GetFVF()&D3DFVF_NORMAL) )
+	{
+		ID3DXMesh* pTempMesh = 0;
+		g_pMesh0->CloneMeshFVF(D3DXMESH_MANAGED, g_pMesh0->GetFVF() | D3DFVF_NORMAL, g_pD3DDevice, &pTempMesh);
+
+		D3DXComputeNormals( pTempMesh,0 );
+
+		g_pMesh0->Release();
+		g_pMesh0 = pTempMesh;
+	}
+
 	//1¹ø
 	D3DXMATERIAL* d3dxMarteials = (D3DXMATERIAL*) pD3DXMtrlBuffer0->GetBufferPointer();
 	g_pMeshMaterials0 = new D3DMATERIAL9[g_dwNumMaterials];
