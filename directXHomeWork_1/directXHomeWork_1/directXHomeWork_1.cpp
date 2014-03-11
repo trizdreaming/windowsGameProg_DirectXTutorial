@@ -76,7 +76,7 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 
 	if (SUCCEEDED(InitD3D(hWnd)))
 	{
-		if (SUCCEEDED(InitGeometry()))
+		if ( SUCCEEDED(InitGeometry()) )
 		{
 			ShowWindow(hWnd, SW_SHOWDEFAULT);
 			UpdateWindow(hWnd);
@@ -103,28 +103,28 @@ INT WINAPI wWinMain( HINSTANCE hInst, HINSTANCE, LPWSTR, INT )
 	return 0;
 }
 
-HRESULT InitD3D(HWND hWnd)
+HRESULT InitD3D( HWND hWnd )
 {
-	if (NULL == (g_pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
+	if ( NULL == ( g_pD3D = Direct3DCreate9( D3D_SDK_VERSION ) ) )
 	{
 		return E_FAIL;
 	}
 
 	D3DPRESENT_PARAMETERS d3dpp;
-	ZeroMemory(&d3dpp, sizeof(d3dpp));
+	ZeroMemory( &d3dpp, sizeof( d3dpp ) );
 	d3dpp.Windowed = TRUE;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dpp.BackBufferFormat = D3DFMT_UNKNOWN;
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D16;
 
-	if (FAILED(g_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &g_pD3DDevice)))
+	if ( FAILED( g_pD3D->CreateDevice( D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &g_pD3DDevice ) ) )
 	{
 		return E_FAIL;
 	}
 
-	g_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	g_pD3DDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	g_pD3DDevice->SetRenderState( D3DRS_CULLMODE, D3DCULL_NONE );
+	g_pD3DDevice->SetRenderState( D3DRS_ZENABLE, TRUE );
 	//g_pD3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	return S_OK;
