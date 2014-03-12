@@ -373,7 +373,7 @@ VOID Render()
 		D3DXMATRIXA16 matFirstTiger, matTrans, matRotate;
 		//D3DXMatrixIdentity(&matFirstTiger);
 
-		g_pD3DDevice->GetTransform(D3DTS_WORLD, &matFirstTiger);
+		//g_pD3DDevice->GetTransform(D3DTS_WORLD, &matFirstTiger);
 		D3DXMatrixTranslation(&matTrans, -3.f, -1.5f, -1.6f);		
 		D3DXMatrixRotationY(&matRotate, timeGetTime() / 1000.0f);
 		D3DXMatrixMultiply(&matFirstTiger, &matRotate, &matTrans);
