@@ -74,8 +74,8 @@ VS_OUTPUT RenderSceneVS( float4 vPos : POSITION,
 	//움직인 이후 postion을 계산하는 식
 	//여기서 움직임은 살찌고 마르는 것을 의미
 	if ( bAnimate )
-		vAnimatedPos = vAnimatedPos;
-		//vAnimatedPos += float4(vNormal, 0) * (sin(g_fTime+5.5)+0.5)*5;
+		//vAnimatedPos = vAnimatedPos;
+		vAnimatedPos += float4(vNormal, 0) * (sin(g_fTime+5.5)+0.5)*5;
     
     //mul = 곱셉
 	//화면 월드 매트릭스에 움직인 포지션 값 곱
